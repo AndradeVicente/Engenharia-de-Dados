@@ -1,0 +1,59 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-sensores
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+    env_file:
+      - .env
+
+  pipeline-processor:
+    build:
+      context: .
+      dockerfile: Dockerfile.pipeline
+    container_name: pipeline-processor
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+
+  sensor-1:
+    build: .
+    container_name: sensor-python-1
+    restart: always
+    environment:
+      - SENSOR_ID=1
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+
+  sensor-2:
+    build: .
+    container_name: sensor-python-2
+    restart: always
+    environment:
+      - SENSOR_ID=2
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+
+  sensor-3:
+    build: .
+    container_name: sensor-python-3
+    restart: always
+    environment:
+      - SENSOR_ID=3
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq

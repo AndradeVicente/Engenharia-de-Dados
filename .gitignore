@@ -1,1 +1,5 @@
 .env
+.erlang.cookie
+
+# Volumes do RabbitMQ
+/aulas/aula-02/rabbitmq/mnesia/
